@@ -1,0 +1,190 @@
+/* Map Container */
+#map {
+    height: 100vh;
+    width: 100%;
+    z-index: 1;
+}
+
+/* Sidebar / Overlay Controls */
+.map-controls {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    width: 320px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.control-header h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.control-header p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.custom-select {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.5rem;
+    color: var(--light);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+}
+
+.custom-select option {
+    background: var(--dark);
+    color: var(--light);
+}
+
+.toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.toggle-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.toggle-item input[type="checkbox"] {
+    accent-color: var(--primary);
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Hazard Icons in Legend/Toggles */
+.legend-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.75rem;
+}
+
+.legend-icon.construction {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--warning);
+}
+
+.legend-icon.lights {
+    background: rgba(17, 24, 39, 0.5);
+    color: #fbbf24;
+    border: 1px solid #fbbf24;
+}
+
+.legend-icon.sewage {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+}
+
+.legend-icon.roads {
+    background: rgba(107, 114, 128, 0.2);
+    color: var(--text-muted);
+}
+
+/* Bottom Panel - Trip Stats */
+.trip-stats {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 90%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    color: var(--secondary);
+    /* Default to safe green */
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+/* Simulation Button */
+.sim-btn {
+    position: absolute;
+    bottom: 120px;
+    right: 20px;
+    z-index: 1000;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
+    transition: 0.3s;
+}
+
+.sim-btn:hover {
+    transform: scale(1.1);
+}
+
+.sim-btn.active {
+    background: var(--danger);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+/* User Location Marker Pulse */
+.user-marker-pulse {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #3b82f6;
+    border: 3px solid white;
+    box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.3);
+}
