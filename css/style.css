@@ -117,3 +117,91 @@ button {
     border: 1px solid var(--glass-border);
     border-radius: 1rem;
 }
+
+/* ============================================
+   RESPONSIVE DESIGN - MEDIA QUERIES
+   ============================================ */
+
+/* Large Tablets & Small Desktops (769px - 1024px) */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 960px;
+        padding: 0 1.5rem;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+}
+
+/* Tablets (481px - 768px) */
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+        padding: 0 1rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.75rem;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+    }
+
+    .btn {
+        padding: 0.65rem 1.25rem;
+        font-size: 0.9rem;
+    }
+
+    /* Stack elements vertically */
+    .features-grid,
+    .review-track {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* Mobile Devices (max 480px) */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 0.75rem;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+        line-height: 1.2;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    h3 {
+        font-size: 1.1rem;
+    }
+
+    .btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.875rem;
+        width: 100%;
+    }
+
+    .glass {
+        border-radius: 0.75rem;
+        padding: 1rem;
+    }
+
+    /* Smaller text for mobile */
+    body {
+        font-size: 0.9rem;
+    }
+}

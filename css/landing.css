@@ -385,6 +385,8 @@
 .reviews-wrapper {
     position: relative;
     padding: 0 40px;
+    overflow: hidden;
+    /* Prevent horizontal page scroll */
 }
 
 .reviews-track {
@@ -405,15 +407,16 @@
 
 .review-card {
     min-width: 18.8%;
-    /* 5 cards visible */
+    max-width: 400px;
+    /* Prevent cards from being too wide */
     flex: 0 0 auto;
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
-    /* Scroll Snap */
     scroll-snap-align: start;
+    box-sizing: border-box;
+    /* Include padding in width */
 }
 
 .review-card .stars {
@@ -519,17 +522,364 @@
     pointer-events: all;
 }
 
-/* Media Queries for Reviews */
+/* ============================================
+   RESPONSIVE DESIGN - LANDING PAGE
+   ============================================ */
+
+/* Tablets & Small Desktops (769px - 1024px) */
 @media (max-width: 1024px) {
     .review-card {
         min-width: 31%;
-        /* 3 cards */
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
+/* Tablets (481px - 768px) */
 @media (max-width: 768px) {
+
+    /* Navbar */
+    .navbar .container {
+        padding: 0 1rem;
+    }
+
+    .nav-links {
+        display: none;
+        /* Hide on mobile - sidebar takes over */
+    }
+
+    .nav-logo {
+        font-size: 1.25rem;
+    }
+
+    /* Hero */
+    .hero {
+        padding: 8rem 0 4rem;
+        min-height: 80vh;
+    }
+
+    .hero h1 {
+        font-size: 2.25rem;
+        line-height: 1.2;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.75rem;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+    }
+
+    /* Route Input */
+    .route-input {
+        padding: 1.5rem;
+    }
+
+    .input-group {
+        flex-direction: column;
+        gap: 0;
+        padding: 0.75rem 1rem;
+    }
+
+    .input-group i {
+        margin-bottom: 0.5rem;
+        margin-right: 0;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 0.75rem 0;
+        font-size: 0.95rem;
+    }
+
+    #find-route-btn {
+        width: 100%;
+        padding: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    /* Features */
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .feature-card {
+        padding: 1.5rem;
+    }
+
+    /* About */
+    #about .glass {
+        padding: 2rem 1.5rem;
+    }
+
+    /* Reviews */
     .review-card {
         min-width: 85%;
-        /* 1 card */
+        padding: 1.5rem 1.25rem;
+    }
+
+    .review-card p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .review-controls {
+        margin-top: 1.5rem;
+    }
+
+    .control-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+}
+
+/* Mobile Devices (max 480px) */
+@media (max-width: 480px) {
+
+    /* Navbar */
+    .navbar {
+        padding: 0.75rem 0;
+    }
+
+    .nav-logo {
+        font-size: 1.1rem;
+    }
+
+    #menu-btn {
+        font-size: 1.25rem;
+    }
+
+    /* Hero */
+    .hero {
+        padding: 6rem 0 3rem;
+        min-height: auto;
+    }
+
+    .hero h1 {
+        font-size: 1.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .hero p {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Route Input */
+    .route-input {
+        padding: 1.25rem;
+        margin: 2rem auto;
+    }
+
+    .route-input h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .input-group {
+        padding: 0.65rem 0.85rem;
+        margin-bottom: 0.75rem;
+        border-radius: 0.5rem;
+        background: rgba(255, 255, 255, 0.03);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .input-group i:first-child {
+        font-size: 1.1rem;
+        margin-bottom: 0;
+        margin-right: 0.25rem;
+    }
+
+    .input-group input {
+        flex: 1;
+        padding: 0.65rem 0;
+        font-size: 0.9rem;
+        width: auto;
+    }
+
+    .input-group input::placeholder {
+        font-size: 0.85rem;
+    }
+
+    .location-btn {
+        flex-shrink: 0;
+        padding: 0.5rem;
+        margin: 0;
+    }
+
+    #current-location-btn {
+        padding: 0.5rem;
+        width: auto;
+        height: auto;
+    }
+
+    #find-route-btn {
+        padding: 0.85rem;
+        font-size: 0.95rem;
+    }
+
+    /* Features Section */
+    section {
+        padding: 3rem 0;
+    }
+
+    .section-header h2 {
+        font-size: 1.75rem;
+    }
+
+    .section-header p {
+        font-size: 0.9rem;
+    }
+
+    .feature-card {
+        padding: 1.25rem;
+    }
+
+    .feature-card .icon {
+        width: 3.5rem;
+        height: 3.5rem;
+        font-size: 1.5rem;
+    }
+
+    .feature-card h3 {
+        font-size: 1.1rem;
+    }
+
+    .feature-card p {
+        font-size: 0.85rem;
+    }
+
+    /* About Section */
+    #about .glass {
+        padding: 1.5rem 1rem;
+    }
+
+    #about h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+    }
+
+    #about p {
+        font-size: 0.9rem;
+    }
+
+    /* Team Section */
+    .team-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .team-member {
+        padding: 1.25rem;
+    }
+
+    /* Reviews */
+    .review-container {
+        padding: 1.5rem 1rem;
+    }
+
+    .review-card {
+        padding: 1.25rem;
+        min-width: calc(100% - 1rem);
+        max-width: calc(100% - 1rem);
+    }
+
+    .review-card .stars {
+        font-size: 0.85rem;
+        margin-bottom: 0.85rem;
+    }
+
+    .review-card p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+    }
+
+    .user-info {
+        gap: 8px;
+    }
+
+    .user-info .avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.75rem;
+    }
+
+    .user-info span {
+        font-size: 0.85rem;
+    }
+
+    /* Review Form Modal */
+    #review-form-container {
+        width: 95%;
+        padding: 1.5rem;
+    }
+
+    #review-text {
+        min-height: 100px;
+        font-size: 0.9rem;
+        padding: 0.85rem;
+    }
+
+    .star-rating i {
+        font-size: 1.75rem;
+    }
+
+    /* Sidebar */
+    #sidebar {
+        width: 85%;
+        left: -85%;
+        padding: 1.5rem;
+    }
+
+    #sidebar.active {
+        left: 0;
+    }
+
+    /* Transition Overlay */
+    #transition-overlay h2 {
+        font-size: 1.5rem;
+    }
+
+    #transition-overlay i {
+        font-size: 3rem;
+    }
+}
+
+/* Extra Small Devices (max 360px) */
+@media (max-width: 360px) {
+    .hero h1 {
+        font-size: 1.5rem;
+    }
+
+    .route-input {
+        padding: 1rem;
+    }
+
+    .btn {
+        padding: 0.65rem 0.85rem;
+        font-size: 0.85rem;
+    }
+
+    .feature-card {
+        padding: 1rem;
     }
 }

@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const hazardIcon = (type) => {
-        let iconClass = 'fa-triangle-exclamation'; // default
+        let iconClass = 'fa-triangle-exclamation';
         let color = '#ef4444';
 
         switch (type) {
@@ -47,13 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const safePointIcon = (type) => {
         let iconClass = 'fa-shield-halved';
-        let color = '#10b981'; // Green for everything safe
+        let color = '#10b981';
 
         if (type === 'shop') iconClass = 'fa-mug-hot';
-        if (type === 'police') { iconClass = 'fa-building-shield'; color = '#3b82f6'; } // Police Blue
-        if (type === 'hospital') { iconClass = 'fa-hospital'; color = '#ef4444'; } // Hospital Red
-
-        // Ensure "Safe Points" are consistently Green-themed if they aren't explicit emergency services
+        if (type === 'police') { iconClass = 'fa-building-shield'; color = '#3b82f6'; }
+        if (type === 'hospital') { iconClass = 'fa-hospital'; color = '#ef4444'; }
         if (type === 'safe_zone' || type === 'shop') color = '#10b981';
 
         return L.divIcon({
@@ -77,27 +75,43 @@ document.addEventListener('DOMContentLoaded', () => {
     L.marker(KIET_COORDS, { icon: createIcon('#10b981') }).addTo(map).bindPopup(`<b>Start:</b> ${startName}`);
     L.marker(INDIA_GATE_COORDS, { icon: createIcon('#f59e0b') }).addTo(map).bindPopup(`<b>Destination:</b> ${destName}`);
 
-    // Polylines (Real Road Geometry)
-    // Standard (Unsafe) - Red
+    // Polylines
     const standardPoly = L.polyline(STANDARD_PATH, {
         color: '#ef4444',
         weight: 5,
         opacity: 0.7
     }).addTo(map);
 
-    // Hazard List for Popup
     const hazardList = HAZARDS.filter(h => !['Unlit Alley', 'Sewer Leakage', 'Damaged Pavement'].includes(h.title))
         .map(h => `<li>${h.title} (${h.type.replace('_', ' ')})</li>`).slice(0, 5).join('');
 
     standardPoly.bindPopup(`
         <div style="text-align: center;">
             <h3 style="color: #ef4444; margin: 0 0 5px 0;"><i class="fa-solid fa-triangle-exclamation"></i> Unsafe Route</h3>
-            <p style="margin: 0;">contains reported hazards:</p>
-            <ul style="text-align: left; font-size: 0.9em; padding-left: 20px; margin-top: 5px;">${hazardList}</ul>
+            <p style="margin: 0; font-size: 0.85rem; opacity: 0.9;">This route contains reported hazards</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin: 0.75rem 0; padding: 0.5rem; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+                <div>
+                    <div style="font-size: 1.1rem; font-weight: bold; color: #ef4444;">38 min</div>
+                    <div style="font-size: 0.7rem; opacity: 0.7;">Est. Time</div>
+                </div>
+                <div>
+                    <div style="font-size: 1.1rem; font-weight: bold; color: #ef4444;">62%</div>
+                    <div style="font-size: 0.7rem; opacity: 0.7;">Safety Score</div>
+                </div>
+                <div>
+                    <div style="font-size: 1.1rem; font-weight: bold; color: #ef4444;">19.5 km</div>
+                    <div style="font-size: 0.7rem; opacity: 0.7;">Distance</div>
+                </div>
+            </div>
+            
+            <div style="text-align: left; margin-top: 0.5rem;">
+                <strong style="font-size: 0.85rem;">Hazards on route:</strong>
+                <ul style="font-size: 0.85em; padding-left: 20px; margin: 5px 0;">${hazardList}</ul>
+            </div>
         </div>
     `);
 
-    // Safe (Optimized) - Green
     const safePoly = L.polyline(SAFE_PATH, {
         color: '#10b981',
         weight: 6,
@@ -121,25 +135,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, 500);
 
-
     // Layers
     const hazardLayer = L.layerGroup().addTo(map);
     const safeLayer = L.layerGroup().addTo(map);
 
-    // 1. Render Pre-defined Safe Points
-    if (SAFE_POINTS) {
-        SAFE_POINTS.forEach(point => {
-            L.marker([point.lat, point.lng], { icon: safePointIcon(point.type) })
-                .bindPopup(`<b>${point.title}</b><br>Type: ${point.type === 'shop' ? 'Safe Rest Stop' : 'Verified Safe Zone'}`)
-                .addTo(safeLayer);
-        });
-    }
+    // Store fetched safe points globally for filtering
+    let fetchedSafePoints = [];
 
-    // 2. Fetch REAL Data from Overpass API (Police & Hospitals)
-    // Bounding Box roughly covering Noida/Ghaziabad/Delhi
+    // Fetch REAL Data from Overpass API
     const fetchRealData = async () => {
-        // Query for Police (amenity=police) and Hospitals (amenity=hospital)
-        // BBox: South,West,North,East
         const query = `
             [out:json];
             (
@@ -158,37 +162,33 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data && data.elements) {
                 let policeCount = 0;
                 let hospitalCount = 0;
-                const MAX_ITEMS = 5; // Reduced from displaying all to just 5 of each to save performance
+                const MAX_ITEMS = 5;
 
                 data.elements.forEach(el => {
                     const type = el.tags.amenity;
-
-                    // Filter limits
                     if (type === 'police' && policeCount >= MAX_ITEMS) return;
                     if (type === 'hospital' && hospitalCount >= MAX_ITEMS) return;
 
                     if (el.lat && el.lon) {
                         const name = el.tags.name || (type === 'police' ? 'Police Station' : 'Hospital');
-
-                        L.marker([el.lat, el.lon], { icon: safePointIcon(type) })
-                            .bindPopup(`<b>${name}</b><br><span style="text-transform: capitalize;">${type}</span>`)
-                            .addTo(safeLayer);
+                        fetchedSafePoints.push({ lat: el.lat, lng: el.lon, type: type, title: name });
 
                         if (type === 'police') policeCount++;
                         if (type === 'hospital') hospitalCount++;
                     }
                 });
-                console.log(`Fetched and rendered ${policeCount} Police Stations and ${hospitalCount} Hospitals.`);
+
+                console.log(`Fetched ${policeCount} Police Stations and ${hospitalCount} Hospitals.`);
+                renderSafePoints(); // Render after fetch completes
             }
         } catch (error) {
             console.warn("Error fetching real map data:", error);
         }
     };
 
-    // Trigger Fetch
     fetchRealData();
 
-
+    // === HAZARD FILTERING ===
     function renderHazards(enabledTypes) {
         hazardLayer.clearLayers();
         HAZARDS.forEach(hazard => {
@@ -200,19 +200,50 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Filter Logic
-    const toggles = document.querySelectorAll('.hazard-toggle');
-    function getActiveFilters() {
-        return Array.from(toggles).filter(cb => cb.checked).map(cb => cb.value);
+    const hazardToggles = document.querySelectorAll('.hazard-toggle');
+    function getActiveHazardFilters() {
+        return Array.from(hazardToggles).filter(cb => cb.checked).map(cb => cb.value);
     }
 
-    toggles.forEach(toggle => {
+    hazardToggles.forEach(toggle => {
         toggle.addEventListener('change', () => {
-            renderHazards(getActiveFilters());
+            renderHazards(getActiveHazardFilters());
         });
     });
 
-    renderHazards(getActiveFilters());
+    renderHazards(getActiveHazardFilters());
+
+    // === SAFE ZONE FILTERING ===
+    function renderSafePoints() {
+        safeLayer.clearLayers();
+        const activeSafeFilters = Array.from(safeToggles).filter(cb => cb.checked).map(cb => cb.value);
+
+        // 1. Render Pre-defined Safe Points (shops and safe zones)
+        if (SAFE_POINTS && activeSafeFilters.includes('safe_spot')) {
+            SAFE_POINTS.forEach(point => {
+                L.marker([point.lat, point.lng], { icon: safePointIcon(point.type) })
+                    .bindPopup(`<b>${point.title}</b><br>Type: ${point.type === 'shop' ? 'Coffee Shop' : 'Safe Zone'}`)
+                    .addTo(safeLayer);
+            });
+        }
+
+        // 2. Render Fetched Real Data (police and hospitals)
+        fetchedSafePoints.forEach(point => {
+            if (activeSafeFilters.includes(point.type)) {
+                L.marker([point.lat, point.lng], { icon: safePointIcon(point.type) })
+                    .bindPopup(`<b>${point.title}</b><br><span style="text-transform: capitalize;">${point.type}</span>`)
+                    .addTo(safeLayer);
+            }
+        });
+    }
+
+    const safeToggles = document.querySelectorAll('.safe-toggle');
+
+    safeToggles.forEach(toggle => {
+        toggle.addEventListener('change', renderSafePoints);
+    });
+
+    renderSafePoints(); // Initial render
 
     // Real-Time Location Logic
     const userLat = sessionStorage.getItem('userLat');
@@ -231,13 +262,67 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- DRIVER.JS TOUR ---
+    // DRIVER.JS TOUR - Comprehensive Feature Walkthrough
     const driver = window.driver.js.driver;
     const mapTour = driver({
         showProgress: true,
         steps: [
-            { element: '#map', popover: { title: 'Interactive Map', description: 'Zoom in to see Police Stations, Hospitals, and Safe Zones.' } },
-            { element: '.map-controls', popover: { title: 'Filters', description: 'Toggle hazards to see different route options.' } }
+            {
+                element: '#map',
+                popover: {
+                    title: '🗺️ Interactive Safety Map',
+                    description: 'Welcome to the Safe Route Map! You can see two paths: the <span style="color: #ef4444;">red unsafe route</span> and the <span style="color: #10b981;">green safe route</span>. Click on either path to view detailed statistics.',
+                    side: "left",
+                    align: 'start'
+                }
+            },
+            {
+                element: '.map-controls',
+                popover: {
+                    title: '⚙️ Route Filters Panel',
+                    description: 'This powerful control panel lets you customize exactly what you see on the map. Filters are organized into two sections for easy management.',
+                    side: "right",
+                    align: 'start'
+                }
+            },
+
+            {
+                element: '#hazards-toggles',
+                popover: {
+                    title: '⚠️ Hazard Filters',
+                    description: 'Toggle Construction, Sewage, Broken Lights, and Roads on/off. Uncheck any to hide those hazard markers from the map!',
+                    side: "bottom",
+                    align: 'start'
+                }
+            },
+
+            {
+                element: '#safe-zones-toggles',
+                popover: {
+                    title: '🛡️ Safe Zone Filters',
+                    description: '<strong>Police Stations</strong> 🔵 • <strong>Hospitals</strong> 🔴 • <strong>Coffee Shops & Safe Spots</strong> 🟢<br>Toggle to show/hide!',
+                    side: "bottom",
+                    align: 'start'
+                }
+            },
+
+
+            {
+                popover: {
+                    title: '☕ Real-Time Safety Data',
+                    description: 'Coffee shops and safe zones are perfect rest stops! Police stations and hospitals are fetched live from OpenStreetMap for accurate locations.',
+                    side: "center",
+                    align: 'center'
+                }
+            },
+            {
+                popover: {
+                    title: '🚀 Start Exploring!',
+                    description: 'Use the filters to customize your view and always choose the safest route. Stay safe! 🛡️✨',
+                    side: "center",
+                    align: 'center'
+                }
+            }
         ]
     });
 
@@ -246,6 +331,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (!localStorage.getItem('mapTourSeen')) {
-        setTimeout(() => { mapTour.drive(); localStorage.setItem('mapTourSeen', 'true'); }, 1000);
+        setTimeout(() => { mapTour.drive(); localStorage.setItem('mapTourSeen', 'true'); }, 1500);
     }
 });

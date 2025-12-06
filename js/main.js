@@ -336,18 +336,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- DRIVER.JS TOUR ---
+    // --- DRIVER.JS TOUR - Landing Page Walkthrough ---
     if (window.driver) {
         const driver = window.driver.js.driver;
         const tour = driver({
             showProgress: true,
             steps: [
-                { element: '.navbar', popover: { title: 'Navigation', description: 'Access login, registration, and other pages here.' } },
-                { element: '.hero h1', popover: { title: 'Welcome to Safe Route', description: 'We help you find the safest path, avoiding dark alleys and construction zones.' } },
-                { element: '#start-location', popover: { title: 'Start Point', description: 'Enter your starting location or use the Current Location button.' } },
-                { element: '#destination', popover: { title: 'Destination', description: 'Type where you want to go. Try "India Gate"!' } },
-                { element: '#find-route-btn', popover: { title: 'Find Route', description: 'Click here to calculate the safest path and view it on the map.' } },
-                { element: '.features-grid', popover: { title: 'Key Features', description: 'See what makes our routing engine unique and safe.' } }
+                {
+                    element: '.hero h1',
+                    popover: {
+                        title: '🛡️ Welcome to Safe Route',
+                        description: 'Your personal safety navigator! We analyze real-time data to find the <span style="color: #10b981;">safest path</span>, avoiding dark areas, construction, and hazards.',
+                        side: "bottom",
+                        align: 'center'
+                    }
+                },
+                {
+                    element: '#start-location',
+                    popover: {
+                        title: '🚀 Starting Point',
+                        description: 'Enter your starting location or click the <strong>GPS button</strong> to auto-detect your current location.',
+                        side: "bottom",
+                        align: 'start'
+                    }
+                },
+                {
+                    element: '#destination',
+                    popover: {
+                        title: '🎯 Destination',
+                        description: 'Where do you want to go? Try entering <strong>"India Gate"</strong> or any landmark!',
+                        side: "bottom",
+                        align: 'start'
+                    }
+                },
+                {
+                    element: '#find-route-btn',
+                    popover: {
+                        title: '🔍 Find Safest Route',
+                        description: 'Click to calculate your route. You\'ll see the <strong>interactive map</strong> with safety scores, hazards, and safe zones!',
+                        side: "top",
+                        align: 'center'
+                    }
+                },
+                {
+                    element: '.features-grid',
+                    popover: {
+                        title: '✨ Key Features',
+                        description: 'AI Safety Analysis • Real-time Hazard Detection • Community Data • Live Safe Zones',
+                        side: "top",
+                        align: 'center'
+                    }
+                },
+                {
+                    popover: {
+                        title: '🚀 You\'re All Set!',
+                        description: 'Enter your locations and start planning the safest journey. Stay protected! 🛡️✨',
+                        side: "center",
+                        align: 'center'
+                    }
+                }
             ]
         });
 
@@ -359,8 +406,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!localStorage.getItem('tourSeen')) {
-            tour.drive();
-            localStorage.setItem('tourSeen', 'true');
+            setTimeout(() => {
+                tour.drive();
+                localStorage.setItem('tourSeen', 'true');
+            }, 1000);
         }
     }
 });
