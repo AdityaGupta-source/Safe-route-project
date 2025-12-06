@@ -26,72 +26,81 @@
 
     <!-- Sidebar / Filtering Overlay -->
     <div class="map-controls glass">
-        <div class="control-header"
-            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <div>
+        <!-- Button Group (always visible) -->
+        <div class="sidebar-buttons">
+            <button id="map-tour-btn" class="sidebar-help-btn" title="Start Tour">
+                <i class="fa-solid fa-circle-question"></i>
+            </button>
+            <button id="sidebar-toggle-btn" class="sidebar-toggle" title="Toggle Filters">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Collapsible Content -->
+        <div class="sidebar-content">
+            <div class="control-header">
                 <h2>Route Filters</h2>
                 <p style="font-size: 0.8rem; opacity: 0.7;">Customize safety.</p>
             </div>
-            <button id="map-tour-btn" class="btn-icon" title="Start Tour"
-                style="background: transparent; border: 1px solid var(--primary); color: var(--primary); width: 30px; height: 30px; border-radius: 50%; cursor: pointer;"><i
-                    class="fa-solid fa-circle-question"></i></button>
+
+            <h4 id="hazards-section"
+                style="margin: 0.5rem 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">
+                Hazards</h4>
+            <div class="toggles" id="hazards-toggles">
+                <label class="toggle-item">
+                    <input type="checkbox" class="hazard-toggle" value="construction" checked>
+                    <div class="legend-icon construction"><i class="fa-solid fa-person-digging"></i></div>
+                    <span>Construction</span>
+                </label>
+                <label class="toggle-item">
+                    <input type="checkbox" class="hazard-toggle" value="sewage" checked>
+                    <div class="legend-icon sewage"><i class="fa-solid fa-water"></i></div>
+                    <span>Open Sewage</span>
+                </label>
+                <label class="toggle-item">
+                    <input type="checkbox" class="hazard-toggle" value="broken_lights" checked>
+                    <div class="legend-icon lights"><i class="fa-regular fa-lightbulb"></i></div>
+                    <span>Broken Lights</span>
+                </label>
+                <label class="toggle-item">
+                    <input type="checkbox" class="hazard-toggle" value="broken_roads" checked>
+                    <div class="legend-icon roads"><i class="fa-solid fa-road-spikes"></i></div>
+                    <span>Broken Roads</span>
+                </label>
+            </div>
+
+            <h4 id="safe-zones-section"
+                style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">
+                Safe Zones</h4>
+            <div class="toggles" id="safe-zones-toggles">
+                <label class="toggle-item">
+                    <input type="checkbox" class="safe-toggle" value="police" checked>
+                    <div class="legend-icon" style="background: #3b82f6;"><i class="fa-solid fa-building-shield"></i>
+                    </div>
+                    <span>Police Stations</span>
+                </label>
+                <label class="toggle-item">
+                    <input type="checkbox" class="safe-toggle" value="hospital" checked>
+                    <div class="legend-icon" style="background: #ef4444;"><i class="fa-solid fa-hospital"></i></div>
+                    <span>Hospitals</span>
+                </label>
+                <label class="toggle-item">
+                    <input type="checkbox" class="safe-toggle" value="safe_spot" checked>
+                    <div class="legend-icon" style="background: #10b981;"><i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <span>Safe Spots</span>
+                </label>
+            </div>
+
+            <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;"
+                onclick="alert('Route updated based on filters!')">
+                Apply Filters
+            </button>
+
+            <a href="index.html" class="btn btn-outline" style="width: 100%; text-align: center; margin-top: 1rem;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Home
+            </a>
         </div>
-
-        <h4 id="hazards-section"
-            style="margin: 0.5rem 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">
-            Hazards</h4>
-        <div class="toggles" id="hazards-toggles">
-            <label class="toggle-item">
-                <input type="checkbox" class="hazard-toggle" value="construction" checked>
-                <div class="legend-icon construction"><i class="fa-solid fa-person-digging"></i></div>
-                <span>Construction</span>
-            </label>
-            <label class="toggle-item">
-                <input type="checkbox" class="hazard-toggle" value="sewage" checked>
-                <div class="legend-icon sewage"><i class="fa-solid fa-water"></i></div>
-                <span>Open Sewage</span>
-            </label>
-            <label class="toggle-item">
-                <input type="checkbox" class="hazard-toggle" value="broken_lights" checked>
-                <div class="legend-icon lights"><i class="fa-regular fa-lightbulb"></i></div>
-                <span>Broken Lights</span>
-            </label>
-            <label class="toggle-item">
-                <input type="checkbox" class="hazard-toggle" value="broken_roads" checked>
-                <div class="legend-icon roads"><i class="fa-solid fa-road-spikes"></i></div>
-                <span>Broken Roads</span>
-            </label>
-        </div>
-
-        <h4 id="safe-zones-section"
-            style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">
-            Safe Zones</h4>
-        <div class="toggles" id="safe-zones-toggles">
-            <label class="toggle-item">
-                <input type="checkbox" class="safe-toggle" value="police" checked>
-                <div class="legend-icon" style="background: #3b82f6;"><i class="fa-solid fa-building-shield"></i></div>
-                <span>Police Stations</span>
-            </label>
-            <label class="toggle-item">
-                <input type="checkbox" class="safe-toggle" value="hospital" checked>
-                <div class="legend-icon" style="background: #ef4444;"><i class="fa-solid fa-hospital"></i></div>
-                <span>Hospitals</span>
-            </label>
-            <label class="toggle-item">
-                <input type="checkbox" class="safe-toggle" value="safe_spot" checked>
-                <div class="legend-icon" style="background: #10b981;"><i class="fa-solid fa-shield-halved"></i></div>
-                <span>Safe Spots</span>
-            </label>
-        </div>
-
-        <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;"
-            onclick="alert('Route updated based on filters!')">
-            Apply Filters
-        </button>
-
-        <a href="index.html" class="btn btn-outline" style="width: 100%; text-align: center; margin-top: 1rem;">
-            <i class="fa-solid fa-arrow-left"></i> Back to Home
-        </a>
     </div>
 
     <!-- Map Container -->

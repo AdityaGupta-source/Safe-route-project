@@ -1,4 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // ========== SIDEBAR TOGGLE FUNCTIONALITY ==========
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+    const mapControls = document.querySelector('.map-controls');
+
+    if (sidebarToggleBtn && mapControls) {
+        sidebarToggleBtn.addEventListener('click', () => {
+            mapControls.classList.toggle('collapsed');
+
+            // Update icon
+            const icon = sidebarToggleBtn.querySelector('i');
+            if (mapControls.classList.contains('collapsed')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-chevron-right');
+            } else {
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-bars');
+            }
+        });
+    }
+
     // Access data from global scope (defined in data.js)
     const { KIET_COORDS, INDIA_GATE_COORDS, HAZARDS, STANDARD_PATH, SAFE_PATH, SAFE_POINTS } = window.SAFE_ROUTE_DATA;
 

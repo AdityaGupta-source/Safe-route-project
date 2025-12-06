@@ -16,6 +16,101 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    transition: width 0.3s ease, padding 0.3s ease;
+}
+
+/* Sidebar Button Group */
+.sidebar-buttons {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+/* Sidebar Help Button */
+.sidebar-help-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(79, 70, 229, 0.2);
+}
+
+.sidebar-help-btn:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.5);
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(79, 70, 229, 0.3);
+}
+
+.sidebar-toggle:hover {
+    background: var(--primary-dark);
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.5);
+}
+
+.sidebar-toggle i {
+    transition: transform 0.3s ease;
+}
+
+/* Sidebar Content - Collapsible */
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    opacity: 1;
+    max-height: 2000px;
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+/* Collapsed State */
+.map-controls.collapsed {
+    width: 70px;
+    padding: 1rem;
+}
+
+.map-controls.collapsed .sidebar-content {
+    opacity: 0;
+    max-height: 0;
+    pointer-events: none;
+}
+
+.map-controls.collapsed .sidebar-toggle i {
+    transform: rotate(180deg);
+}
+
+.map-controls.collapsed .sidebar-help-btn {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
 }
 
 .control-header h2 {
@@ -199,6 +294,10 @@
         width: 280px;
     }
 
+    .map-controls.collapsed {
+        width: 60px;
+    }
+
     .trip-stats {
         max-width: 500px;
         padding: 1rem 1.5rem;
@@ -273,6 +372,28 @@
         gap: 1rem;
         max-height: 50vh;
         overflow-y: auto;
+    }
+
+    .map-controls.collapsed {
+        width: 60px;
+        max-height: 60px;
+        overflow: hidden;
+    }
+
+    .sidebar-toggle {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    .sidebar-help-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    .sidebar-buttons {
+        gap: 0.4rem;
     }
 
     .control-header {
