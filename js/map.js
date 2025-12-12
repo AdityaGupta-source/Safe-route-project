@@ -353,4 +353,167 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('mapTourSeen')) {
         setTimeout(() => { mapTour.drive(); localStorage.setItem('mapTourSeen', 'true'); }, 1500);
     }
+
+    // ========== TOAST NOTIFICATION SYSTEM ==========
+    function showToast(type, title, message, duration = 4000) {
+        const container = document.getElementById('toast-container');
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+
+        const icons = {
+            success: 'fa-circle-check',
+            error: 'fa-circle-xmark',
+            info: 'fa-circle-info',
+            warning: 'fa-triangle-exclamation'
+        };
+
+        toast.innerHTML = `
+            <i class="fas ${icons[type]} toast-icon"></i>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                <div class="toast-message">${message}</div>
+            </div>
+            <button class="toast-close">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+
+        container.appendChild(toast);
+
+        // Close button functionality
+        const closeBtn = toast.querySelector('.toast-close');
+        closeBtn.addEventListener('click', () => {
+            toast.classList.add('hide');
+            setTimeout(() => toast.remove(), 400);
+        });
+
+        // Auto remove after duration
+        setTimeout(() => {
+            toast.classList.add('hide');
+            setTimeout(() => toast.remove(), 400);
+        }, duration);
+    }
+
+    // ========== CUSTOM MODAL CONFIRMATION ==========
+    function showModal(title, message, iconType = 'success') {
+        return new Promise((resolve) => {
+            const overlay = document.getElementById('modal-overlay');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMessage = document.getElementById('modal-message');
+            const modalIcon = document.getElementById('modal-icon');
+            const confirmBtn = document.getElementById('modal-confirm');
+            const cancelBtn = document.getElementById('modal-cancel');
+
+            // Set content
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modalIcon.className = `modal-icon fas ${iconType === 'success' ? 'fa-circle-check success' : 'fa-circle-question info'}`;
+
+            // Show modal
+            overlay.classList.add('active');
+
+            // Handle confirm
+            const handleConfirm = () => {
+                overlay.classList.remove('active');
+                cleanup();
+                resolve(true);
+            };
+
+            // Handle cancel
+            const handleCancel = () => {
+                overlay.classList.remove('active');
+                cleanup();
+                resolve(false);
+            };
+
+            // Cleanup listeners
+            const cleanup = () => {
+                confirmBtn.removeEventListener('click', handleConfirm);
+                cancelBtn.removeEventListener('click', handleCancel);
+                overlay.removeEventListener('click', handleOverlayClick);
+            };
+
+            // Close on overlay click
+            const handleOverlayClick = (e) => {
+                if (e.target === overlay) {
+                    handleCancel();
+                }
+            };
+
+            confirmBtn.addEventListener('click', handleConfirm);
+            cancelBtn.addEventListener('click', handleCancel);
+            overlay.addEventListener('click', handleOverlayClick);
+        });
+    }
+
+    // ========== SAVE ROUTE FUNCTIONALITY ==========
+    const saveRouteBtn = document.getElementById('save-route-btn');
+
+    if (saveRouteBtn) {
+        saveRouteBtn.addEventListener('click', async () => {
+            // Get route information
+            const routeData = {
+                id: Date.now(),
+                startLocation: startName,
+                endLocation: destName,
+                startCoords: KIET_COORDS,
+                endCoords: INDIA_GATE_COORDS,
+                distance: document.getElementById('route-distance')?.textContent || '22 km',
+                time: document.getElementById('route-time')?.textContent || '45 min',
+                safetyScore: document.getElementById('route-safety')?.textContent || '98%',
+                path: SAFE_PATH,
+                savedAt: new Date().toISOString(),
+                savedDate: new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                })
+            };
+
+            // Get existing saved routes
+            let savedRoutes = JSON.parse(localStorage.getItem('savedRoutes') || '[]');
+
+            // Check if route already exists
+            const exists = savedRoutes.some(route =>
+                route.startLocation === routeData.startLocation &&
+                route.endLocation === routeData.endLocation
+            );
+
+            if (exists) {
+                // Show already saved toast
+                showToast('info', 'Already Saved', 'This route is already in your saved places!', 3000);
+                saveRouteBtn.innerHTML = '<i class="fa-solid fa-check"></i> Already Saved';
+                setTimeout(() => {
+                    saveRouteBtn.innerHTML = '<i class="fa-solid fa-heart"></i> Save Route';
+                }, 2000);
+            } else {
+                // Add new route
+                savedRoutes.unshift(routeData);
+                localStorage.setItem('savedRoutes', JSON.stringify(savedRoutes));
+
+                // Visual feedback
+                saveRouteBtn.innerHTML = '<i class="fa-solid fa-check"></i> Saved!';
+                saveRouteBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+
+                // Show success toast
+                showToast('success', 'Route Saved!', `${startName} → ${destName} added to your saved places.`, 3000);
+
+                // Ask if user wants to view saved places
+                setTimeout(async () => {
+                    const goToSaved = await showModal(
+                        'View Saved Places?',
+                        'Would you like to view all your saved routes now?',
+                        'success'
+                    );
+
+                    if (goToSaved) {
+                        window.location.href = 'saved_places.html';
+                    } else {
+                        saveRouteBtn.innerHTML = '<i class="fa-solid fa-heart"></i> Save Route';
+                    }
+                }, 500);
+            }
+        });
+    }
 });

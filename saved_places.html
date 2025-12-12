@@ -7,6 +7,7 @@
     <title>Saved Places - Safe Route</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/map.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -95,16 +96,246 @@
             <h1
                 style="font-size: 2.5rem; margin-bottom: 2rem; background: linear-gradient(to right, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
                 Saved Places</h1>
-            <div class="glass" style="padding: 2rem; text-align: center;">
+            <!-- Saved Routes Container -->
+            <div id="saved-routes-container">
+                <!-- Routes will be dynamically inserted here -->
+            </div>
+
+            <!-- Empty State (shown when no routes) -->
+            <div id="empty-state" class="glass" style="padding: 2rem; text-align: center; display: none;">
                 <i class="fa-solid fa-heart"
                     style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
-                <h3 style="margin-bottom: 1rem;">Your Favorite Locations</h3>
-                <p style="color: var(--text-muted);">Save your frequent destinations here for quick access. Coming soon.
-                </p>
+                <h3 style="margin-bottom: 1rem;">No Saved Routes Yet</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Save your favorite safe routes from the map
+                    for quick access.</p>
+                <a href="map.html" class="btn btn-primary">
+                    <i class="fa-solid fa-map"></i> Go to Map
+                </a>
             </div>
         </div>
     </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Custom Confirmation Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <i class="modal-icon" id="modal-icon"></i>
+                <h3 class="modal-title" id="modal-title"></h3>
+            </div>
+            <p class="modal-message" id="modal-message"></p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" id="modal-cancel">Cancel</button>
+                <button class="btn btn-primary" id="modal-confirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
+    <script>
+        // Load and display saved routes
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('saved-routes-container');
+            const emptyState = document.getElementById('empty-state');
+
+            // Get saved routes from localStorage
+            const savedRoutes = JSON.parse(localStorage.getItem('savedRoutes') || '[]');
+
+            if (savedRoutes.length === 0) {
+                // Show empty state
+                emptyState.style.display = 'block';
+            } else {
+                // Hide empty state and show routes
+                emptyState.style.display = 'none';
+
+                // Create route cards
+                savedRoutes.forEach((route, index) => {
+                    const routeCard = document.createElement('div');
+                    routeCard.className = 'glass';
+                    routeCard.style.cssText = 'padding: 1.5rem; margin-bottom: 1.5rem; position: relative;';
+
+                    routeCard.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                    <i class="fa-regular fa-circle" style="color: var(--primary); font-size: 0.8rem;"></i>
+                                    <h3 style="margin: 0; font-size: 1.1rem;">${route.startLocation}</h3>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                    <i class="fa-solid fa-location-dot" style="color: var(--secondary); font-size: 0.8rem;"></i>
+                                    <h3 style="margin: 0; font-size: 1.1rem;">${route.endLocation}</h3>
+                                </div>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+                                    <i class="fa-regular fa-clock"></i> Saved on ${route.savedDate}
+                                </p>
+                            </div>
+                            <button class="delete-route-btn" data-index="${index}" 
+                                style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.5rem; border-radius: 8px; cursor: pointer; transition: 0.2s;"
+                                title="Delete route">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding: 1rem; background: rgba(16, 185, 129, 0.05); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: var(--primary);">${route.distance}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Distance</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: var(--primary);">${route.time}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Est. Time</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: var(--success);">${route.safetyScore}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Safety Score</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            <a href="map.html" class="btn btn-primary" style="flex: 1; text-align: center;">
+                                <i class="fa-solid fa-map"></i> View on Map
+                            </a>
+                            <button class="btn btn-outline use-route-btn" data-index="${index}" style="flex: 1;">
+                                <i class="fa-solid fa-route"></i> Use This Route
+                            </button>
+                        </div>
+                    `;
+
+                    container.appendChild(routeCard);
+                });
+
+                // Add delete functionality
+                document.querySelectorAll('.delete-route-btn').forEach(btn => {
+                    btn.addEventListener('click', async function () {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        const route = savedRoutes[index];
+
+                        const confirmed = await showModal(
+                            'Delete Route?',
+                            `Are you sure you want to remove "${route.startLocation} → ${route.endLocation}" from your saved routes?`,
+                            'danger'
+                        );
+
+                        if (confirmed) {
+                            savedRoutes.splice(index, 1);
+                            localStorage.setItem('savedRoutes', JSON.stringify(savedRoutes));
+                            showToast('success', 'Route Deleted', 'The route has been removed from your saved places.', 3000);
+                            setTimeout(() => location.reload(), 800);
+                        }
+                    });
+
+                    // Hover effect
+                    btn.addEventListener('mouseenter', function () {
+                        this.style.background = 'rgba(239, 68, 68, 0.2)';
+                    });
+                    btn.addEventListener('mouseleave', function () {
+                        this.style.background = 'rgba(239, 68, 68, 0.1)';
+                    });
+                });
+
+                // Add use route functionality
+                document.querySelectorAll('.use-route-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        const route = savedRoutes[index];
+
+                        // Store route info in sessionStorage and redirect to map
+                        sessionStorage.setItem('routeStart', route.startLocation);
+                        sessionStorage.setItem('routeDest', route.endLocation);
+                        showToast('info', 'Loading Route', 'Redirecting to map...', 2000);
+                        setTimeout(() => {
+                            window.location.href = 'map.html';
+                        }, 500);
+                    });
+                });
+            }
+
+            // ========== TOAST NOTIFICATION SYSTEM ==========
+            function showToast(type, title, message, duration = 4000) {
+                const container = document.getElementById('toast-container');
+
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+
+                const icons = {
+                    success: 'fa-circle-check',
+                    error: 'fa-circle-xmark',
+                    info: 'fa-circle-info',
+                    warning: 'fa-triangle-exclamation'
+                };
+
+                toast.innerHTML = `
+                    <i class="fas ${icons[type]} toast-icon"></i>
+                    <div class="toast-content">
+                        <div class="toast-title">${title}</div>
+                        <div class="toast-message">${message}</div>
+                    </div>
+                    <button class="toast-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+
+                container.appendChild(toast);
+
+                const closeBtn = toast.querySelector('.toast-close');
+                closeBtn.addEventListener('click', () => {
+                    toast.classList.add('hide');
+                    setTimeout(() => toast.remove(), 400);
+                });
+
+                setTimeout(() => {
+                    toast.classList.add('hide');
+                    setTimeout(() => toast.remove(), 400);
+                }, duration);
+            }
+
+            // ========== CUSTOM MODAL CONFIRMATION ==========
+            function showModal(title, message, iconType = 'success') {
+                return new Promise((resolve) => {
+                    const overlay = document.getElementById('modal-overlay');
+                    const modalTitle = document.getElementById('modal-title');
+                    const modalMessage = document.getElementById('modal-message');
+                    const modalIcon = document.getElementById('modal-icon');
+                    const confirmBtn = document.getElementById('modal-confirm');
+                    const cancelBtn = document.getElementById('modal-cancel');
+
+                    modalTitle.textContent = title;
+                    modalMessage.textContent = message;
+                    modalIcon.className = `modal-icon fas ${iconType === 'danger' ? 'fa-triangle-exclamation danger' : 'fa-circle-check success'}`;
+
+                    overlay.classList.add('active');
+
+                    const handleConfirm = () => {
+                        overlay.classList.remove('active');
+                        cleanup();
+                        resolve(true);
+                    };
+
+                    const handleCancel = () => {
+                        overlay.classList.remove('active');
+                        cleanup();
+                        resolve(false);
+                    };
+
+                    const cleanup = () => {
+                        confirmBtn.removeEventListener('click', handleConfirm);
+                        cancelBtn.removeEventListener('click', handleCancel);
+                        overlay.removeEventListener('click', handleOverlayClick);
+                    };
+
+                    const handleOverlayClick = (e) => {
+                        if (e.target === overlay) handleCancel();
+                    };
+
+                    confirmBtn.addEventListener('click', handleConfirm);
+                    cancelBtn.addEventListener('click', handleCancel);
+                    overlay.addEventListener('click', handleOverlayClick);
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
