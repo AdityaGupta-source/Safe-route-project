@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add OpenStreetMap Tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors | Coded by Team Infernix',
+        attribution: '&copy; OpenStreetMap contributors',
         className: 'map-tiles'
     }).addTo(map);
 
