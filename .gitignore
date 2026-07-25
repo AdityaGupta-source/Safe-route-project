@@ -1,0 +1,15 @@
+node_modules
+dist
+dist-ssr
+*.local
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+
+# Local tooling config
+.claude/settings.local.json
+
+# Environment
+.env
+.env.*
+!.env.example

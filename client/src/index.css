@@ -1,0 +1,336 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   BASE
+   Tailwind's preflight strips heading sizes and
+   list styles, so the browser defaults the old
+   stylesheet relied on are restored here.
+   ============================================ */
+@layer base {
+  body {
+    @apply font-body bg-dark text-light leading-relaxed overflow-x-hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-bold;
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+
+  h2 {
+    font-size: 1.5em;
+  }
+
+  h3 {
+    font-size: 1.17em;
+  }
+
+  h4 {
+    font-size: 1em;
+  }
+
+  h5 {
+    font-size: 0.83em;
+  }
+
+  h6 {
+    font-size: 0.67em;
+  }
+
+  a {
+    @apply no-underline text-inherit transition-all duration-300;
+  }
+
+  button {
+    @apply cursor-pointer border-none font-body;
+  }
+
+  /* Global heading scale-down, mirroring the legacy max-width queries */
+  @media (max-width: 1024px) {
+    h1 {
+      font-size: 2.5rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    body {
+      font-size: 0.9rem;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+/* ============================================
+   COMPONENTS
+   Patterns reused across several pages. Anything
+   local to a single component lives as utility
+   classes in that component's JSX instead.
+   ============================================ */
+@layer components {
+  .app-container {
+    @apply w-full mx-auto px-3 sm:px-4 md:px-6 md:max-w-[960px] lg:px-8 lg:max-w-[1200px];
+  }
+
+  .glass {
+    @apply bg-white/5 backdrop-blur-[10px] border border-white/20 rounded-2xl sm:rounded-2xl;
+  }
+
+  @media (max-width: 480px) {
+    .glass {
+      @apply rounded-xl p-4;
+    }
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 active:scale-95;
+  }
+
+  @media (max-width: 768px) {
+    .btn {
+      @apply px-5 py-[0.65rem] text-[0.9rem];
+    }
+  }
+
+  @media (max-width: 480px) {
+    .btn {
+      @apply w-full px-4 py-[0.6rem] text-sm;
+    }
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white shadow-primary hover:bg-primary-dark hover:-translate-y-px;
+  }
+
+  .btn-outline {
+    @apply bg-transparent border border-white/20 text-light hover:bg-white/10 hover:border-primary;
+  }
+
+  .nav-item {
+    @apply text-muted font-medium transition-colors duration-200 hover:text-light;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-light text-[0.95rem] transition-all duration-300 hover:bg-primary/10 hover:text-primary;
+  }
+
+  .sidebar-link.active {
+    @apply bg-primary/20 text-primary font-semibold;
+  }
+
+  .sidebar-link i {
+    @apply w-5 text-center;
+  }
+
+  .input-group {
+    @apply relative flex items-center bg-white/5 border border-white/20 rounded-lg px-4 py-2;
+  }
+
+  .input-group > i:first-child {
+    @apply text-muted mr-3;
+  }
+
+  .input-group input {
+    @apply w-full bg-transparent border-none text-light py-2 text-base font-body focus:outline-none;
+  }
+
+  @media (max-width: 768px) {
+    .input-group {
+      @apply flex-col gap-0 px-4 py-3;
+    }
+
+    .input-group > i:first-child {
+      @apply mb-2 mr-0;
+    }
+
+    .input-group input {
+      @apply w-full py-3 text-[0.95rem];
+    }
+  }
+
+  @media (max-width: 480px) {
+    .input-group {
+      @apply flex-row items-center gap-2 bg-white/[0.03] px-[0.85rem] py-[0.65rem] mb-3 rounded-lg;
+    }
+
+    .input-group > i:first-child {
+      @apply text-[1.1rem] mb-0 mr-1;
+    }
+
+    .input-group input {
+      @apply flex-1 w-auto py-[0.65rem] text-[0.9rem];
+    }
+
+    .input-group input::placeholder {
+      font-size: 0.85rem;
+    }
+  }
+
+  .section-title {
+    @apply text-primary uppercase tracking-[2px] text-[0.9rem] font-bold mb-2;
+  }
+
+  .section-subtitle {
+    @apply text-[2.5rem] leading-[1.2] mb-6 bg-subtitle-fade bg-clip-text text-transparent;
+  }
+
+  .section-text {
+    @apply text-muted text-[1.1rem] mb-6;
+  }
+
+  .heading-gradient {
+    @apply bg-heading-fade bg-clip-text text-transparent;
+  }
+
+  /* ---------- Toasts ---------- */
+  .toast {
+    @apply pointer-events-auto min-w-[300px] flex items-center gap-4 px-6 py-4 rounded-xl border border-white/10 shadow-toast opacity-0 animate-toast-in;
+    background: rgba(17, 24, 39, 0.95);
+    backdrop-filter: blur(10px);
+  }
+
+  .toast.hide {
+    @apply animate-toast-out;
+  }
+
+  .toast.success {
+    @apply border-l-4 border-l-secondary;
+  }
+
+  .toast.error {
+    @apply border-l-4 border-l-danger;
+  }
+
+  .toast.info {
+    @apply border-l-4 border-l-info;
+  }
+
+  .toast.warning {
+    @apply border-l-4 border-l-warning;
+  }
+
+  @media (max-width: 480px) {
+    .toast {
+      @apply min-w-0 w-full px-4 py-[0.85rem];
+    }
+  }
+
+  /* ---------- Confirmation modal ---------- */
+  .modal-overlay {
+    @apply fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-[4px] opacity-0 pointer-events-none transition-opacity duration-300;
+  }
+
+  .modal-overlay.active {
+    @apply opacity-100 pointer-events-auto;
+  }
+
+  .modal {
+    @apply w-[90%] max-w-[400px] p-8 rounded-2xl border border-white/10 shadow-modal scale-90 transition-transform duration-300;
+    background: rgba(17, 24, 39, 0.98);
+  }
+
+  .modal-overlay.active .modal {
+    @apply scale-100;
+  }
+
+  @media (max-width: 480px) {
+    .modal {
+      @apply p-6;
+    }
+  }
+}
+
+/* ============================================
+   THIRD-PARTY / GENERATED DOM
+   Leaflet markers, popups and the Driver.js tour
+   render outside React, so they are styled here
+   rather than with utilities.
+   ============================================ */
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4f46e5;
+  border-radius: 5px;
+  border: 2px solid #0f172a;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
+}
+
+/* Dark-mode map tiles */
+.leaflet-tile-pane {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+/* Preflight removes list markers; popups still need them */
+.leaflet-popup-content ul {
+  list-style: disc;
+}
+
+/* Pulsing "you are here" marker */
+.user-marker-pulse {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 3px solid white;
+  box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.3);
+}
+
+/* Hide the horizontal scrollbar on the reviews rail */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
