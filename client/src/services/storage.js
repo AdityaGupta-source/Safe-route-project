@@ -38,3 +38,20 @@ export const setTrustedContacts = (contacts) => writeJSON(STORAGE_KEYS.trustedCo
 
 export const getSession = (key) => sessionStorage.getItem(key);
 export const setSession = (key, value) => sessionStorage.setItem(key, value);
+
+export function getSessionJSON(key, fallback) {
+  try {
+    const raw = sessionStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+export function setSessionJSON(key, value) {
+  try {
+    sessionStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Storage full or unavailable (private mode) - fail quietly.
+  }
+}

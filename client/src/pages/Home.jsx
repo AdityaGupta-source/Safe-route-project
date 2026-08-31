@@ -12,10 +12,10 @@ import ReviewsSection from '../components/home/ReviewsSection';
 import TransitionOverlay from '../components/home/TransitionOverlay';
 import { useSidebar } from '../hooks/useSidebar';
 
-import featureMap from '../assets/feature-map.png';
-import community from '../assets/community.png';
-import safeShop from '../assets/safe-shop.png';
-import liveTracking from '../assets/live-tracking.png';
+import featureMap from '../assets/feature-map.webp';
+import community from '../assets/community.webp';
+import safeShop from '../assets/safe-shop.webp';
+import liveTracking from '../assets/live-tracking.webp';
 
 gsap.registerPlugin(ScrollTrigger);
 

@@ -14,9 +14,8 @@ import {
   writeJSON,
   STORAGE_KEYS,
 } from '../services/storage';
-import { KIET_COORDS, INDIA_GATE_COORDS, SAFE_PATH } from '../data/routeData';
 
-const TRIP = { time: '45 min', safety: '98%', distance: '22 km' };
+const FALLBACK_TRIP = { time: '45 min', safety: '98%', distance: '22 km' };
 
 export default function MapView() {
   const [collapsed, setCollapsed] = useState(false);
@@ -29,11 +28,20 @@ export default function MapView() {
   const { showToast } = useToast();
   const { confirm } = useConfirm();
 
-  const { startName, destName } = useSafeRouteMap({
-    containerId: 'map',
-    hazardFilters,
-    safeFilters,
-  });
+  const { startName, destName, startCoords, destCoords, tripStats, routeCoords, applyFilters, applying } =
+    useSafeRouteMap({
+      containerId: 'map',
+      hazardFilters,
+      safeFilters,
+    });
+
+  const trip = tripStats
+    ? {
+        time: `${tripStats.durationMin} min`,
+        safety: `${tripStats.safetyScore}%`,
+        distance: `${tripStats.distanceKm} km`,
+      }
+    : FALLBACK_TRIP;
 
   // Auto-run the tour on a user's first visit, then never again.
   useEffect(() => {
@@ -74,12 +82,12 @@ export default function MapView() {
       id: Date.now(),
       startLocation: startName,
       endLocation: destName,
-      startCoords: KIET_COORDS,
-      endCoords: INDIA_GATE_COORDS,
-      distance: TRIP.distance,
-      time: TRIP.time,
-      safetyScore: TRIP.safety,
-      path: SAFE_PATH,
+      startCoords,
+      endCoords: destCoords,
+      distance: trip.distance,
+      time: trip.time,
+      safetyScore: trip.safety,
+      path: routeCoords,
       savedAt: new Date().toISOString(),
       savedDate: new Date().toLocaleDateString('en-US', {
         year: 'numeric',
@@ -132,9 +140,8 @@ export default function MapView() {
         onHazardChange={toggleFilter(setHazardFilters)}
         safeFilters={safeFilters}
         onSafeChange={toggleFilter(setSafeFilters)}
-        onApplyFilters={() =>
-          showToast('success', 'Filters Applied', 'Route updated based on your filters.', 2500)
-        }
+        onApplyFilters={applyFilters}
+        applyingFilters={applying}
       />
 
       <div id="map" className="h-screen max-[480px]:h-[100dvh] w-full z-[1]" />
@@ -147,7 +154,7 @@ export default function MapView() {
         {saveButtonContent}
       </button>
 
-      <TripStats time={TRIP.time} safety={TRIP.safety} distance={TRIP.distance} />
+      <TripStats time={trip.time} safety={trip.safety} distance={trip.distance} />
     </div>
   );
 }

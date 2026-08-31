@@ -306,11 +306,6 @@
   background: #6366f1;
 }
 
-/* Dark-mode map tiles */
-.leaflet-tile-pane {
-  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
-}
-
 /* Preflight removes list markers; popups still need them */
 .leaflet-popup-content ul {
   list-style: disc;

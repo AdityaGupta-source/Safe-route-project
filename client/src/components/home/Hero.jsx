@@ -1,5 +1,5 @@
 import RoutePlanner from './RoutePlanner';
-import heroImage from '../../assets/hero-safe-route.png';
+import heroImage from '../../assets/hero-safe-route.webp';
 
 export default function Hero({ onFindRoute }) {
   return (
@@ -12,6 +12,10 @@ export default function Hero({ onFindRoute }) {
         src={heroImage}
         alt="Safe Route Map"
         data-anim="hero-img"
+        width={720}
+        height={720}
+        fetchpriority="high"
+        decoding="async"
         className="absolute right-[-10%] top-1/2 opacity-20 z-[1] pointer-events-none w-[60%] mix-blend-lighten"
         style={{ transform: 'translateY(-50%) perspective(1000px) rotateY(-20deg) rotateX(10deg)' }}
       />

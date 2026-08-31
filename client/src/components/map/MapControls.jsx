@@ -29,6 +29,7 @@ export default function MapControls({
   safeFilters,
   onSafeChange,
   onApplyFilters,
+  applyingFilters,
 }) {
   return (
     <div
@@ -74,7 +75,9 @@ export default function MapControls({
           <h2 className="text-[1.25rem] mb-1 max-[768px]:text-[1.1rem] max-[480px]:text-base">
             Route Filters
           </h2>
-          <p className="text-[0.8rem] opacity-70 max-[480px]:text-xs">Customize safety.</p>
+          <p className="text-[0.8rem] opacity-70 max-[480px]:text-xs">
+            What should we avoid? Ticked hazards are routed around — everything else still counts, just less.
+          </p>
         </div>
 
         <div>
@@ -121,8 +124,19 @@ export default function MapControls({
           </div>
         </div>
 
-        <button type="button" onClick={onApplyFilters} className="btn btn-primary w-full">
-          Apply Filters
+        <button
+          type="button"
+          onClick={onApplyFilters}
+          disabled={applyingFilters}
+          className="btn btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {applyingFilters ? (
+            <>
+              <i className="fa-solid fa-spinner fa-spin" /> Applying...
+            </>
+          ) : (
+            'Apply Filters'
+          )}
         </button>
 
         <Link to="/" className="btn btn-outline w-full text-center">

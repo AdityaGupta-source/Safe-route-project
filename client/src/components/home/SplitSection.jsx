@@ -5,7 +5,15 @@
 export default function SplitSection({ id, image, alt, title, subtitle, text, reverse = false, children }) {
   const media = (
     <div className="glass flex-1 overflow-hidden p-2.5 transition-transform duration-500 hover:-translate-y-[5px]">
-      <img src={image} alt={alt} className="w-full h-auto rounded-[0.8rem] block" />
+      <img
+        src={image}
+        alt={alt}
+        width={900}
+        height={900}
+        loading="lazy"
+        decoding="async"
+        className="w-full h-auto rounded-[0.8rem] block"
+      />
     </div>
   );
 
